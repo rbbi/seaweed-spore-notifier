@@ -14,7 +14,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Example"
+	name = "Seaweed Spore Notifier"
 )
 public class SeaweedSporeNotifierPlugin extends Plugin
 {

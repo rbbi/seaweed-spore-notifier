@@ -1,2 +1,2 @@
-# Example
-An example greeter plugin
+# Seaweed Spore Notifier
+Notifies you when seaweed spores spawn
