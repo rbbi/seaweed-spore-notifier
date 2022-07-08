@@ -1,13 +1,10 @@
 package com.notifier;
 
-import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
-import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.client.config.ConfigManager;
+import net.runelite.api.TileItem;
+import net.runelite.api.events.ItemSpawned;
+import net.runelite.client.Notifier;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -18,36 +15,18 @@ import net.runelite.client.plugins.PluginDescriptor;
 )
 public class SeaweedSporeNotifierPlugin extends Plugin
 {
-	@Inject
-	private Client client;
 
 	@Inject
-	private SeaweedSporeNotifierConfig config;
-
-	@Override
-	protected void startUp() throws Exception
-	{
-		log.info("Example started!");
-	}
-
-	@Override
-	protected void shutDown() throws Exception
-	{
-		log.info("Example stopped!");
-	}
+	private Notifier notifier;
 
 	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	public void onItemSpawned(ItemSpawned itemSpawned)
 	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
-		}
+		TileItem item = itemSpawned.getItem();
+		notifier.notify(item.getQuantity()
+			+ " seaweed spore" + (item.getQuantity() == 1 ? " " : "s ")
+			+ (item.getQuantity() == 1 ? "has" : "have")
+			+ " spawned!");
 	}
 
-	@Provides
-	SeaweedSporeNotifierConfig provideConfig(ConfigManager configManager)
-	{
-		return configManager.getConfig(SeaweedSporeNotifierConfig.class);
-	}
 }
