@@ -3,6 +3,7 @@ package com.notifier;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemID;
+import net.runelite.api.TileItem;
 import net.runelite.api.events.ItemSpawned;
 import net.runelite.client.Notifier;
 import net.runelite.client.eventbus.Subscribe;
@@ -22,11 +23,11 @@ public class SeaweedSporeNotifierPlugin extends Plugin
 	@Subscribe
 	public void onItemSpawned(ItemSpawned itemSpawned)
 	{
-		var item = itemSpawned.getItem();
+		TileItem item = itemSpawned.getItem();
 		if (item.getId() == ItemID.SEAWEED_SPORE)
 		{
-			var sporeQuantity = item.getQuantity();
-			var singleSpore = sporeQuantity == 1;
+			int sporeQuantity = item.getQuantity();
+			boolean singleSpore = sporeQuantity == 1;
 
 			notifier.notify(sporeQuantity + " seaweed spore"
 				+ (singleSpore ? " " : "s ")
