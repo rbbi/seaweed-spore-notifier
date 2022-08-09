@@ -1,4 +1,4 @@
-package com.notifier;
+package io.github.rbbi.plugin;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
