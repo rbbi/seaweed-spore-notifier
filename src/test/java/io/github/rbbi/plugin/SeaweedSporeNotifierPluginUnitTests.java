@@ -9,9 +9,12 @@ import net.runelite.client.Notifier;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
@@ -24,54 +27,48 @@ public class SeaweedSporeNotifierPluginUnitTests
 	@Mock
 	private Notifier notifier;
 
+	@Mock
+	private SeaweedSporeNotifierConfig config;
+
+	@InjectMocks
+	private SeaweedSporeNotifierPlugin plugin;
+
 	@Test
-	public void testSingleSeaweedSpawnedNotificationMessage()
+	public void testSeaweedSpawnedNotificationMessage()
 	{
-		TileItem item = itemWithQuantity(ItemID.SEAWEED_SPORE, 1);
-		SeaweedSporeNotifierPlugin plugin = new SeaweedSporeNotifierPlugin(notifier, minQuantity(1));
-		plugin.onItemSpawned(new ItemSpawned(null, item));
+		when(config.minQuantity()).thenReturn(1);
+		plugin.onItemSpawned(newItemWithQuantity(ItemID.SEAWEED_SPORE, 1));
 		verify(notifier, times(1)).notify("1 seaweed spore has spawned!");
-	}
+		clearInvocations(notifier);
 
-	@Test
-	public void testSpawnedQuantityAboveConfigMinimumNotifies()
-	{
-		TileItem item = itemWithQuantity(ItemID.SEAWEED_SPORE, 3);
-		SeaweedSporeNotifierPlugin plugin = new SeaweedSporeNotifierPlugin(notifier, minQuantity(2));
-		plugin.onItemSpawned(new ItemSpawned(null, item));
-		verify(notifier, times(1)).notify("3 seaweed spores have spawned!");
-	}
-
-	@Test
-	public void testSpawnedQuantitySameAsConfigMinimumNotifies()
-	{
-		TileItem item = itemWithQuantity(ItemID.SEAWEED_SPORE, 2);
-		SeaweedSporeNotifierPlugin plugin = new SeaweedSporeNotifierPlugin(notifier, minQuantity(2));
-		plugin.onItemSpawned(new ItemSpawned(null, item));
+		// testSpawnedQuantitySameAsConfigMinimumNotifies
+		when(config.minQuantity()).thenReturn(2);
+		plugin.onItemSpawned(newItemWithQuantity(ItemID.SEAWEED_SPORE, 2));
 		verify(notifier, times(1)).notify("2 seaweed spores have spawned!");
-	}
+		clearInvocations(notifier);
 
-	@Test
-	public void testSpawnedQuantityBelowConfigMinimumDoesntNotify()
-	{
-		TileItem item = itemWithQuantity(ItemID.SEAWEED_SPORE, 2);
-		SeaweedSporeNotifierPlugin plugin = new SeaweedSporeNotifierPlugin(notifier, minQuantity(3));
-		plugin.onItemSpawned(new ItemSpawned(null, item));
+		// testSpawnedQuantityAboveConfigMinimumNotifies
+		when(config.minQuantity()).thenReturn(2);
+		plugin.onItemSpawned(newItemWithQuantity(ItemID.SEAWEED_SPORE, 3));
+		verify(notifier, times(1)).notify("3 seaweed spores have spawned!");
+		clearInvocations(notifier);
+
+		// testSpawnedQuantityBelowConfigMinimumDoesntNotify
+		when(config.minQuantity()).thenReturn(3);
+		plugin.onItemSpawned(newItemWithQuantity(ItemID.SEAWEED_SPORE, 2));
 		verify(notifier, times(0)).notify(any());
 	}
 
 	@Test
 	public void testNonSeaweedSporeItemDoesNotNotify()
 	{
-		TileItem item = itemWithQuantity(ItemID.CABBAGE, 1);
-		SeaweedSporeNotifierPlugin plugin = new SeaweedSporeNotifierPlugin(notifier, minQuantity(1));
-		plugin.onItemSpawned(new ItemSpawned(null, item));
+		plugin.onItemSpawned(newItemWithQuantity(ItemID.CABBAGE, 1));
 		verify(notifier, times(0)).notify(any());
 	}
 
-	private TileItem itemWithQuantity(int itemId, int quantity)
+	private ItemSpawned newItemWithQuantity(int itemId, int quantity)
 	{
-		return new TileItem()
+		return new ItemSpawned(null, new TileItem()
 		{
 			@Override
 			public int getId()
@@ -126,18 +123,7 @@ public class SeaweedSporeNotifierPluginUnitTests
 			{
 				return 0;
 			}
-		};
+		});
 	}
 
-	private SeaweedSporeNotifierConfig minQuantity(int minQuantity)
-	{
-		return new SeaweedSporeNotifierConfig()
-		{
-			@Override
-			public int minQuantity()
-			{
-				return minQuantity;
-			}
-		};
-	}
 }

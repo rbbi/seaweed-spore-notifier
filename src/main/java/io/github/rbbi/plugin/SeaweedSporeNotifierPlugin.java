@@ -30,12 +30,6 @@ public class SeaweedSporeNotifierPlugin extends Plugin
 		return configManager.getConfig(SeaweedSporeNotifierConfig.class);
 	}
 
-	public SeaweedSporeNotifierPlugin(Notifier notifier, SeaweedSporeNotifierConfig config)
-	{
-		this.notifier = notifier;
-		this.config = config;
-	}
-
 	@Subscribe
 	public void onItemSpawned(ItemSpawned itemSpawned)
 	{
