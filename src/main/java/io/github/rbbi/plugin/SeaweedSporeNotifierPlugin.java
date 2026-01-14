@@ -3,7 +3,8 @@ package io.github.rbbi.plugin;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ItemID;
+import net.runelite.api.Client;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.api.TileItem;
 import net.runelite.api.events.ItemSpawned;
 import net.runelite.client.Notifier;
@@ -23,6 +24,9 @@ public class SeaweedSporeNotifierPlugin extends Plugin
 	private Notifier notifier;
 
 	@Inject
+	private Client client;
+
+	@Inject
 	private SeaweedSporeNotifierConfig config;
 
 	@Provides
@@ -33,8 +37,12 @@ public class SeaweedSporeNotifierPlugin extends Plugin
 	@Subscribe
 	public void onItemSpawned(ItemSpawned itemSpawned)
 	{
+		if (config.onlyUnderwater() && !Region.isPlayerUnderwater(client))
+		{
+			return;
+		}
 		TileItem item = itemSpawned.getItem();
-		if (item.getId() == ItemID.SEAWEED_SPORE)
+		if (item.getId() == ItemID.SEAWEED_SEED)
 		{
 			int sporeQuantity = item.getQuantity();
 			if (sporeQuantity < config.minQuantity()) return;
