@@ -5,6 +5,7 @@ import net.runelite.api.coords.WorldPoint;
 
 public class Region
 {
+	// Chunk IDs for the underwater area at Fossil Island
 	private static final int[] UNDERWATER = {15008, 15264};
 
 	public static boolean isPlayerUnderwater(Client client)
