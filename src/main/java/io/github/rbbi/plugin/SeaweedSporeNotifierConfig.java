@@ -26,4 +26,13 @@ public interface SeaweedSporeNotifierConfig extends Config
 		return 1;
 	}
 
+	@ConfigItem(
+		keyName = "onlyUnderwater",
+		name = "Only works underwater",
+		description = "Check this box to only allow the plugin to work when underwater at Fossil Island."
+	)
+	default boolean onlyUnderwater()
+	{
+		return true;
+	}
 }
